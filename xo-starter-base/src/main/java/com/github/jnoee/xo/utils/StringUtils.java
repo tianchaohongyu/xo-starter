@@ -3,7 +3,8 @@ package com.github.jnoee.xo.utils;
 import com.github.jnoee.xo.exception.SysException;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collection;
+import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,22 +14,58 @@ import java.util.stream.Stream;
 public class StringUtils {
 
   /**
-   * 判断一个字符串是否为null或者""，如果是返回other,否则返回原值
+   * 将null视为空
    * @param value 欲判断的字符串
-   * @param other 用于替换的字符串
+   * @return 判断一个字符串是否为null，如果是返回"",否则返回原值
+   */
+  public static String nullAsEmpty(String value) {
+    return nullAs(value,"") ;
+  }
+
+  /**
+   * 将null视为另一个字符串
+   * @param value 欲判断的字符串
+   * @param other 用于替换的另一个字符串
+   * @return 判断一个字符串是否为null，如果是返回other,否则返回原值
+   */
+  public static String nullAs(String value, String other) {
+    return value == null ? other : value;
+  }
+
+  /**
+   * 将空视为null
+   * @param value 欲判断的字符串
+   * @return 判断一个字符串是否为""，如果是返回null,否则返回原值
+   */
+  public static String emptyAsNull(String value) {
+    return emptyAs(value,null);
+  }
+
+  /**
+   * 将空字符串视为null
+   * @return 判断一个字符串是否为"  "，如果是返回null,否则返回原值
+   */
+  public static String blankAsNull(String value) {
+    return blankAs(value,null);
+  }
+
+  /**
+   * 将空视为另一个字符串
+   * @param value 欲判断的字符串
+   * @param other 用于替换的另一个字符串
    * @return 判断一个字符串是否为null或者""，如果是返回other,否则返回原值
    */
-  public static String emptyThen(String value, String other) {
+  public static String emptyAs(String value, String other) {
     return isEmpty(value) ? other : value;
   }
 
   /**
-   * 判断一个字符串是否为null或者""，如果是返回other,否则返回原值
+   * 将空字符串视为另一个字符串
    * @param value 欲判断的字符串
-   * @param other 用于替换的字符串
+   * @param other 用于替换的另一个字符串
    * @return 判断一个字符串是否为null或者""，如果是返回other,否则返回原值
    */
-  public static String blankThen(String value, String other) {
+  public static String blankAs(String value, String other) {
     return isBlank(value) ? other : value;
   }
 
@@ -60,7 +97,7 @@ public class StringUtils {
    */
   public static Boolean isBlank(String str) {
     if (isNotEmpty(str)) {
-      return str.codePoints().filter(c -> !Character.isWhitespace(c)).count() == 0;
+      return str.codePoints().allMatch(Character::isWhitespace);  //如果全匹配空字符串则则为blank
     } else {
       return true;
     }
@@ -204,6 +241,81 @@ public class StringUtils {
     } catch (UnsupportedEncodingException e) {
       throw new SysException("对字符串进行字符集转换时发生异常", e);
     }
+  }
+
+  /**
+   * 将固定格式的字符串转换成一个字符数组。
+   *
+   * @param strs 字符串
+   * @return 返回一个字符数组。
+   */
+  public static String[] stringToArray(String strs) {
+    String[] result = new String[0];
+    if (isNotBlank(strs)) {
+      result = strs.split(",");
+    }
+    return result;
+  }
+
+  /**
+   * 将字符数组转换成一个固定格式的字符串。
+   *
+   * @param array 字符数组
+   * @return 返回固定格式的字符串。
+   */
+  public static String arrayToString(String[] array) {
+    return join(array, ",");
+  }
+
+  /**
+   * 将固定格式的字符串转换成一个字符列表。
+   *
+   * @param strs 字符串
+   * @return 返回一个字符列表。
+   */
+  public static List<String> stringToList(String strs) {
+    return CollectionUtils.toList(stringToArray(strs));
+  }
+
+  /**
+   * 将字符列表转换成一个固定格式的字符串。
+   *
+   * @param list 字符列表
+   * @return 返回固定格式的字符串。
+   */
+  public static String listToString(List<String> list) {
+    return join(list, ",");
+  }
+
+  /**
+   * 将固定格式的字符串转换成一个Map。
+   *
+   * @param strs 字符串
+   * @return 返回一个Map。
+   */
+  public static Map<String, String> stringToMap(String strs) {
+    Map<String, String> result = new LinkedHashMap<>();
+    if (isNotBlank(strs)) {
+      for (String value : strs.split(",")) {
+        String[] tmpStrs = value.split(":");
+        result.put(tmpStrs[0], tmpStrs[1]);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * 将一个Map转换成固定格式的字符串。
+   *
+   * @param map Map
+   * @return 返回固定格式的字符串。
+   */
+  public static String mapToString(Map<String, String> map) {
+    List<String> result = new ArrayList<>();
+    for (Entry<String, String> entry : map.entrySet()) {
+      result.add(entry.getKey() + ":" + entry.getValue());
+    }
+    return join(result, ",");
   }
 
   /**
