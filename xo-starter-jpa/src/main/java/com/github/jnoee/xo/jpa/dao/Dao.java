@@ -58,7 +58,7 @@ public class Dao<E> {
   /**
    * 创建TypedQuery。
    *
-   * @param jpql JPQL语句
+   * @param jpql   JPQL语句
    * @param values 参数值
    * @return 返回TypedQuery。
    */
@@ -102,7 +102,7 @@ public class Dao<E> {
   /**
    * 获取指定ID的业务实体。
    *
-   * @param id 实体ID
+   * @param id       实体ID
    * @param lockMode 锁定模式
    * @return 返回指定ID的业务实体，如果没有找到则返回null。
    */
@@ -197,12 +197,12 @@ public class Dao<E> {
   /**
    * 根据属性批量删除业务实体。
    *
-   * @param name 属性名
+   * @param name  属性名
    * @param value 属性值
    */
   public void removeBy(String name, Object value) {
     TypedQuery<E> query =
-        createQuery("delete from " + entityClass.getName() + " where " + name + "= ?", value);
+            createQuery("delete from " + entityClass.getName() + " where " + name + "= ?", value);
     query.executeUpdate();
   }
 
@@ -220,7 +220,7 @@ public class Dao<E> {
    * 获取所有业务实体并进行排序。
    *
    * @param orderBy 排序的属性名
-   * @param isAsc 是否升序
+   * @param isAsc   是否升序
    * @return 返回排序后的指定类型的所有业务实体。
    */
   public List<E> getAll(String orderBy, Boolean isAsc) {
@@ -236,7 +236,7 @@ public class Dao<E> {
   /**
    * 根据属性的值查找业务实体。
    *
-   * @param name 属性名
+   * @param name  属性名
    * @param value 属性值
    * @return 返回属性值相符的业务实体集合，如果没有找到返回一个空的集合。
    */
@@ -253,10 +253,10 @@ public class Dao<E> {
   /**
    * 根据属性的值查找业务实体并进行排序。
    *
-   * @param name 属性名
-   * @param value 属性值
+   * @param name    属性名
+   * @param value   属性值
    * @param orderBy 排序属性
-   * @param isAsc 是否升序
+   * @param isAsc   是否升序
    * @return 返回排序后的属性值相符的业务实体集合，如果没有找到返回一个空的集合。
    */
   public List<E> findBy(String name, Object value, String orderBy, boolean isAsc) {
@@ -278,7 +278,7 @@ public class Dao<E> {
    * 判断是否存在属性重复的业务实体。
    *
    * @param entity 待判断的业务实体
-   * @param names 属性名
+   * @param names  属性名
    * @return 如果存在重复的业务实体返回false，否则返回true。
    */
   public Boolean isUnique(E entity, String... names) {
@@ -296,7 +296,7 @@ public class Dao<E> {
   /**
    * 根据属性的值查找唯一的业务实体。
    *
-   * @param name 属性名
+   * @param name  属性名
    * @param value 属性值
    * @return 返回指定唯一的业务实体，如果没有找到则返回null。
    */
@@ -330,10 +330,10 @@ public class Dao<E> {
   /**
    * 根据JPQL查询语句进行分页查询。
    *
-   * @param jpql JPQL查询语句
-   * @param pageNum 待获取的页数
+   * @param jpql     JPQL查询语句
+   * @param pageNum  待获取的页数
    * @param pageSize 每页的记录数
-   * @param values 参数值
+   * @param values   参数值
    * @return 返回查询得到的分页对象。
    */
   public Page<E> findPage(String jpql, Integer pageNum, Integer pageSize, Object... values) {
@@ -346,7 +346,7 @@ public class Dao<E> {
     TypedQuery<E> query = createQuery(jpql, values);
 
     List<E> list = query.setFirstResult((page.getNumber() - 1) * pageSize).setMaxResults(pageSize)
-        .getResultList();
+            .getResultList();
     page.setContents(list);
     return page;
   }
@@ -354,8 +354,8 @@ public class Dao<E> {
   /**
    * 根据查询条件进行分页查询。
    *
-   * @param query TypedQuery
-   * @param pageNum 待获取的页数
+   * @param query    TypedQuery
+   * @param pageNum  待获取的页数
    * @param pageSize 每页的记录数
    * @return 返回查询得到的分页对象。
    */
@@ -368,8 +368,8 @@ public class Dao<E> {
    * 根据查询条件进行分页查询。
    *
    * @param criteriaQuery CriteriaQuery
-   * @param pageNum 待获取的页数
-   * @param pageSize 每页的记录数
+   * @param pageNum       待获取的页数
+   * @param pageSize      每页的记录数
    * @return 返回查询得到的分页对象。
    */
   public Page<E> findPage(CriteriaQuery<E> criteriaQuery, Integer pageNum, Integer pageSize) {
@@ -381,7 +381,7 @@ public class Dao<E> {
    * 根据查询条件进行分页查询。
    *
    * @param criteria 查询条件
-   * @param pageNum 待获取的页数
+   * @param pageNum  待获取的页数
    * @param pageSize 每页的记录数
    * @return 返回查询得到的分页对象。
    */
@@ -392,7 +392,7 @@ public class Dao<E> {
     }
     Page<E> page = new Page<>(count, pageNum, pageSize);
     List<E> list = criteria.toTypedQuery().setFirstResult((page.getNumber() - 1) * pageSize)
-        .setMaxResults(pageSize).getResultList();
+            .setMaxResults(pageSize).getResultList();
     page.setContents(list);
     return page;
   }
@@ -400,8 +400,8 @@ public class Dao<E> {
   /**
    * 根据查询条件进行分页查询。
    *
-   * @param criteria 查询条件
-   * @param pageQuery 搜索模型
+   * @param criteria   查询条件
+   * @param pageQuery  搜索模型
    * @param likeFields 模糊查询字段
    * @return 返回搜索得到的分页对象。
    */
@@ -417,7 +417,7 @@ public class Dao<E> {
    * 获取查询所能获得的对象总数。<br>
    * 本函数只能自动处理简单的JPQL语句,复杂的JPQL查询请另行编写count语句查询。
    *
-   * @param jpql 查询语句
+   * @param jpql   查询语句
    * @param values 查询参数
    * @return 返回查询结果总数。
    */
@@ -425,11 +425,13 @@ public class Dao<E> {
     String fromJpql = "from " + StringUtils.substringBetween(jpql, "from", "order by");
     String countJpql = "select count(*) " + fromJpql;
 
-    TypedQuery<Integer> query = entityManager.createQuery(countJpql, Integer.class);
+    TypedQuery<Long> query = entityManager.createQuery(countJpql, Long.class);
     for (int i = 0; i < values.length; i++) {
       query.setParameter(i, values[i]);
     }
-    return query.getSingleResult();
+    List<Long> list = query.getResultList();
+    if (list.isEmpty()) return 0;
+    return list.get(0).intValue();
   }
 
   /**
