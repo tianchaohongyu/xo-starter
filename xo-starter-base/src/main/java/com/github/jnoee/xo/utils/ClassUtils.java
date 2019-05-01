@@ -1,9 +1,6 @@
 package com.github.jnoee.xo.utils;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.github.jnoee.xo.exception.SysException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -14,7 +11,9 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
-import com.github.jnoee.xo.exception.SysException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class工具类。
@@ -22,17 +21,17 @@ import com.github.jnoee.xo.exception.SysException;
 public class ClassUtils {
   /**
    * 查找指定包下继承了指定类或实现了指定接口的类集合。
-   * 
-   * @param parentClass 父类或接口
+   *
+   * @param parentClass  父类或接口
    * @param packageNames 包名
    * @return 返回指定包下继承了指定类或实现了指定接口的类集合。
    */
-  public static List<Class<?>> findClassesByParentClass(Class<?> parentClass,
-      String... packageNames) {
-    List<Class<?>> classes = new ArrayList<>();
+  public static <T> List<Class<? extends T>> findClassesByParentClass(Class<T> parentClass,
+                                                                      String... packageNames) {
+    List<Class<? extends T>> classes = new ArrayList<>();
     for (String className : findClassNamesByParentClass(parentClass, packageNames)) {
       try {
-        classes.add(Class.forName(className));
+        classes.add((Class<? extends T>) Class.forName(className));
       } catch (Exception e) {
         throw new SysException("加载[" + className + "]类时发生异常。", e);
       }
@@ -42,13 +41,13 @@ public class ClassUtils {
 
   /**
    * 查找指定包下标注了指定注解的类集合。
-   * 
+   *
    * @param annotationClass 注解
-   * @param packageNames 包名
+   * @param packageNames    包名
    * @return 返回指定包下标注了指定注解的类集合。
    */
   public static List<Class<?>> findClassesByAnnotationClass(
-      Class<? extends Annotation> annotationClass, String... packageNames) {
+          Class<? extends Annotation> annotationClass, String... packageNames) {
     List<Class<?>> classes = new ArrayList<>();
     for (String className : findClassNamesByAnnotationClass(annotationClass, packageNames)) {
       try {
@@ -62,7 +61,7 @@ public class ClassUtils {
 
   /**
    * 从类中获取包名。
-   * 
+   *
    * @param targetClass 目标类
    * @return 返回类的包名。
    */
@@ -72,7 +71,7 @@ public class ClassUtils {
 
   /**
    * 从类名中获取包名。
-   * 
+   *
    * @param fullClassName 完整的类名
    * @return 返回类名中的包名。
    */
@@ -82,39 +81,39 @@ public class ClassUtils {
 
   /**
    * 查找指定包下继承了指定类或实现了指定接口的类名集合。
-   * 
-   * @param parentClass 父类或接口
+   *
+   * @param parentClass  父类或接口
    * @param packageNames 包名
    * @return 返回指定包下继承了指定类或实现了指定接口的类名集合。
    */
   private static List<String> findClassNamesByParentClass(Class<?> parentClass,
-      String... packageNames) {
+                                                          String... packageNames) {
     TypeFilter filter = new AssignableTypeFilter(parentClass);
     return findClassNamesByTypeFilter(filter, packageNames);
   }
 
   /**
    * 查找指定包下标注了指定注解的类名集合。
-   * 
+   *
    * @param annotationClass 注解
-   * @param packageNames 包名
+   * @param packageNames    包名
    * @return 返回指定包下标注了指定注解的类名集合。
    */
   private static List<String> findClassNamesByAnnotationClass(
-      Class<? extends Annotation> annotationClass, String... packageNames) {
+          Class<? extends Annotation> annotationClass, String... packageNames) {
     TypeFilter filter = new AnnotationTypeFilter(annotationClass);
     return findClassNamesByTypeFilter(filter, packageNames);
   }
 
   /**
    * 查找指定包下匹配类型过滤器的类名集合。
-   * 
-   * @param filter 类型过滤器
+   *
+   * @param filter       类型过滤器
    * @param packageNames 包名
    * @return 返回指定包下匹配类型过滤器的类名集合。
    */
   private static List<String> findClassNamesByTypeFilter(TypeFilter filter,
-      String... packageNames) {
+                                                         String... packageNames) {
     List<String> classNames = new ArrayList<>();
     ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
     MetadataReaderFactory readerFactory = new CachingMetadataReaderFactory(resourcePatternResolver);
@@ -140,5 +139,6 @@ public class ClassUtils {
   /**
    * 私有构造方法。
    */
-  private ClassUtils() {}
+  private ClassUtils() {
+  }
 }

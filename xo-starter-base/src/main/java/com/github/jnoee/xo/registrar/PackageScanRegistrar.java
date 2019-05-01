@@ -1,19 +1,14 @@
 package com.github.jnoee.xo.registrar;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.github.jnoee.xo.utils.ClassUtils;
+import com.github.jnoee.xo.utils.StringUtils;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.Assert;
 
-import com.github.jnoee.xo.utils.ClassUtils;
-import com.github.jnoee.xo.utils.StringUtils;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 /**
  * 继承ImportBeanDefinitionRegistrar实现的用于包扫描的注册器接口。
@@ -27,8 +22,8 @@ public interface PackageScanRegistrar extends ImportBeanDefinitionRegistrar {
    * @param targetParentClass 目标父类
    * @return 返回符合条件的类列表。
    */
-  default List<Class<?>> findClassesByParentClass(AnnotationMetadata metadata,
-      Class<? extends Annotation> scanAnnotationClass, Class<?> targetParentClass) {
+  default <T> List<Class<? extends T>> findClassesByParentClass(AnnotationMetadata metadata,
+      Class<? extends Annotation> scanAnnotationClass, Class<T> targetParentClass) {
     Set<String> packages = getPackagesToScan(metadata, scanAnnotationClass);
     return ClassUtils.findClassesByParentClass(targetParentClass, packages.toArray(new String[0]));
   }
