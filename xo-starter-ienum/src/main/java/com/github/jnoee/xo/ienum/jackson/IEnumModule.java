@@ -1,12 +1,13 @@
 package com.github.jnoee.xo.ienum.jackson;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.jnoee.xo.ienum.IEnum;
+
+import java.io.IOException;
 
 /**
  * IEnum枚举转换组件。
@@ -20,6 +21,11 @@ public class IEnumModule extends SimpleModule {
   public IEnumModule() {
     super("jackson-datatype-ienum");
     addSerializer(new IEnumSerializer());
+
+
+    JsonDeserializer jsonDeserializer = new IEnumContextualDeserializer();
+    addDeserializer(Enum.class, jsonDeserializer);
+    addDeserializer(IEnum.class, jsonDeserializer);
   }
 
   /**
@@ -33,7 +39,7 @@ public class IEnumModule extends SimpleModule {
 
     @Override
     public void serialize(IEnum value, JsonGenerator jgen, SerializerProvider provider)
-        throws IOException {
+            throws IOException {
       jgen.writeString(value.getValue());
     }
   }

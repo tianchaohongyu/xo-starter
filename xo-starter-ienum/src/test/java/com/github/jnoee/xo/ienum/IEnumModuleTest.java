@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootTest
 @EnableWebMvc
 @ContextConfiguration(classes = {BaseAutoConfiguration.class, JacksonAutoConfiguration.class,
-    IEnumAutoConfiguration.class})
+        IEnumAutoConfiguration.class})
 public class IEnumModuleTest {
   @Autowired
   private ObjectMapper mapper;
@@ -26,6 +26,9 @@ public class IEnumModuleTest {
   public void test() throws Exception {
     TestBean bean = new TestBean();
     String json = mapper.writeValueAsString(bean);
-    Assert.assertEquals("{\"num\":\"1\"}", json);
+    Assert.assertEquals("{\"num\":\"1\",\"javaEnum\":\"ONE\"}", json);
+
+    TestBean bean2 = mapper.readValue("{\"num\":\"1\",\"javaEnum\":0}", TestBean.class);
+    Assert.assertEquals(bean, bean2);
   }
 }
