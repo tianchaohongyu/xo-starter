@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.session.web.http.HeaderHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class CacheAutoConfiguration {
     @ConditionalOnProperty(name = "xo.cache.x-auth-token", havingValue = "true",
             matchIfMissing = true)
     HttpSessionIdResolver httpSessionIdResolver() {
-        return HeaderHttpSessionIdResolver.xAuthToken();
+        return new HeaderAndParameterHttpSessionIdResolver("x-auth-token");
     }
 
     @Bean(destroyMethod = "shutdown")
