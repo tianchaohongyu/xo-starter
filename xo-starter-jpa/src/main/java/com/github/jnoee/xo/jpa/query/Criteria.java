@@ -1,28 +1,15 @@
 package com.github.jnoee.xo.jpa.query;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import com.github.jnoee.xo.utils.StringUtils;
+import lombok.Getter;
+import org.hibernate.query.Query;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.*;
 import javax.persistence.criteria.CriteriaBuilder.In;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.hibernate.query.Query;
-
-import com.github.jnoee.xo.utils.StringUtils;
-
-import lombok.Getter;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Getter
 public class Criteria<E> {
@@ -139,45 +126,24 @@ public class Criteria<E> {
     addPredicate(criteriaBuilder.not(in));
   }
 
-  public void le(String propertyName, Date value) {
+  public <Y extends Comparable<? super Y>> void le(String propertyName, Y value) {
     addPredicate(criteriaBuilder.lessThanOrEqualTo(root.get(propertyName), value));
   }
 
-  public void le(String propertyName, Number value) {
-    addPredicate(criteriaBuilder.le(root.get(propertyName), value));
-  }
-
-  public void lt(String propertyName, Date value) {
+  public  <Y extends Comparable<? super Y>> void lt(String propertyName, Y value) {
     addPredicate(criteriaBuilder.lessThan(root.get(propertyName), value));
   }
 
-  public void lt(String propertyName, Number value) {
-    addPredicate(criteriaBuilder.lt(root.get(propertyName), value));
-  }
-
-  public void ge(String propertyName, Date value) {
+  public <Y extends Comparable<? super Y>> void ge(String propertyName, Y value) {
     addPredicate(criteriaBuilder.greaterThanOrEqualTo(root.get(propertyName), value));
   }
 
-  public void ge(String propertyName, Number value) {
-    addPredicate(criteriaBuilder.ge(root.get(propertyName), value));
-  }
-
-  public void gt(String propertyName, Date value) {
+  public <Y extends Comparable<? super Y>>  void gt(String propertyName, Y value) {
     addPredicate(criteriaBuilder.greaterThan(root.get(propertyName), value));
   }
-
-  public void gt(String propertyName, Number value) {
-    addPredicate(criteriaBuilder.gt(root.get(propertyName), value));
-  }
-
-  public void between(String propertyName, Number lo, Number go) {
+  public <Y extends Comparable<? super Y>>  void between(String propertyName, Y lo, Y go) {
     ge(propertyName, lo);
     le(propertyName, go);
-  }
-
-  public void between(String propertyName, Date startDate, Date endDate) {
-    addPredicate(criteriaBuilder.between(root.get(propertyName), startDate, endDate));
   }
 
   public void asc(String propertyName) {
