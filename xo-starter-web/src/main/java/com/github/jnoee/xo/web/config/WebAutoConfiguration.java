@@ -1,9 +1,16 @@
 package com.github.jnoee.xo.web.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.jnoee.xo.utils.DateUtils;
+import com.github.jnoee.xo.utils.StringUtils;
+import com.github.jnoee.xo.web.handler.ErrorView;
+import com.github.jnoee.xo.web.handler.WebErrorAttributes;
+import com.github.jnoee.xo.web.handler.WebErrorController;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.format.datetime.DateTimeFormatAnnotationFormatterFactory;
@@ -14,11 +21,10 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jnoee.xo.utils.DateUtils;
-import com.github.jnoee.xo.web.handler.ErrorView;
-import com.github.jnoee.xo.web.handler.WebErrorAttributes;
-import com.github.jnoee.xo.web.handler.WebErrorController;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 组件配置。
@@ -28,7 +34,7 @@ import com.github.jnoee.xo.web.handler.WebErrorController;
 public class WebAutoConfiguration implements WebMvcConfigurer {
   /**
    * 配置ErrorAttributes组件。
-   * 
+   *
    * @return 返回ErrorAttributes组件。
    */
   @Bean
@@ -38,7 +44,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
 
   /**
    * 配置异常处理组件。
-   * 
+   *
    * @return 返回异常处理组件。
    */
   @Bean
@@ -48,8 +54,8 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
 
   /**
    * 配置异常视图。
-   * 
-   * @param objectMapper ObjectMapper
+   *
+   * @param objectMapper    ObjectMapper
    * @param errorAttributes ErrorAttributes
    * @return 返回异常视图。
    */
@@ -60,7 +66,7 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
 
   /**
    * 配置跨域支持组件。
-   * 
+   *
    * @return 返回跨域支持组件。
    */
   @Bean
@@ -89,5 +95,35 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
     // 添加DateTimeFormat注解的日期时间转换器
     registry.addFormatterForFieldAnnotation(new DateTimeFormatAnnotationFormatterFactory());
     registry.addFormatterForFieldAnnotation(new JodaDateTimeFormatAnnotationFormatterFactory());
+    {
+      //日期
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      registry.addConverter(new Converter<String, LocalDate>() {
+        @Override
+        public LocalDate convert(String source) {
+          return StringUtils.isBlank(source) ? null : LocalDate.parse(source, dateTimeFormatter);
+        }
+      });
+    }
+    {
+      //时间
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+      registry.addConverter(new Converter<String, LocalTime>() {
+        @Override
+        public LocalTime convert(String source) {
+          return StringUtils.isBlank(source) ? null : LocalTime.parse(source, dateTimeFormatter);
+        }
+      });
+    }
+    {
+      //日期时间
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      registry.addConverter(new Converter<String, LocalDateTime>() {
+        @Override
+        public LocalDateTime convert(String source) {
+          return StringUtils.isBlank(source) ? null : LocalDateTime.parse(source, dateTimeFormatter);
+        }
+      });
+    }
   }
 }
