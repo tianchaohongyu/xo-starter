@@ -1,19 +1,19 @@
 package com.github.jnoee.xo.jpa.usertype;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.jnoee.xo.utils.BeanUtils;
+import com.github.jnoee.xo.utils.CollectionUtils;
+import com.github.jnoee.xo.utils.StringUtils;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.hibernate.engine.spi.SharedSessionContractImplementor;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.github.jnoee.xo.utils.BeanUtils;
-import com.github.jnoee.xo.utils.CollectionUtils;
 
 /**
  * Json格式自定义列表类型。
@@ -23,10 +23,10 @@ public class JsonListUserType extends AbstractListUserType {
 
   @Override
   public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session,
-      Object owner) throws SQLException {
+                            Object owner) throws SQLException {
     try {
       String value = getValue(rs, names[0], session);
-      if (value == null) {
+      if (StringUtils.isBlank(value)) {
         value = "[]";
       }
       Field jsonField = getField(rs, names[0], owner);
@@ -41,7 +41,7 @@ public class JsonListUserType extends AbstractListUserType {
   @SuppressWarnings("unchecked")
   @Override
   public void nullSafeSet(PreparedStatement st, Object value, int index,
-      SharedSessionContractImplementor session) throws SQLException {
+                          SharedSessionContractImplementor session) throws SQLException {
     try {
       List<Object> values = (ArrayList<Object>) value;
       if (CollectionUtils.isNotEmpty(values)) {
