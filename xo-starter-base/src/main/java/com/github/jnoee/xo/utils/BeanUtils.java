@@ -1,17 +1,13 @@
 package com.github.jnoee.xo.utils;
 
+import com.github.jnoee.xo.exception.SysException;
+
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import com.github.jnoee.xo.exception.SysException;
 
 /**
  * Bean工具类。用于直接操作类、对象的属性或方法。
@@ -19,9 +15,9 @@ import com.github.jnoee.xo.exception.SysException;
 public class BeanUtils {
   /**
    * 获取类中指定名称的属性，支持多层级。
-   * 
+   *
    * @param targetClass 类
-   * @param fieldName 属性名
+   * @param fieldName   属性名
    * @return 返回对应的属性，如果没找到返回null。
    */
   public static Field findField(Class<?> targetClass, String fieldName) {
@@ -34,13 +30,13 @@ public class BeanUtils {
 
   /**
    * 获取类中注有指定标注的属性集合。
-   * 
-   * @param targetClass 类
+   *
+   * @param targetClass            类
    * @param annotationClassOnField 标注
    * @return 返回注有指定标注的属性集合。
    */
   public static List<Field> findField(Class<?> targetClass,
-      Class<? extends Annotation> annotationClassOnField) {
+                                      Class<? extends Annotation> annotationClassOnField) {
     List<Field> fields = new ArrayList<>();
     for (Field field : getAllDeclaredField(targetClass)) {
       if (field.isAnnotationPresent(annotationClassOnField)) {
@@ -52,9 +48,9 @@ public class BeanUtils {
 
   /**
    * 获取对象中指定属性的值。
-   * 
+   *
    * @param target 对象
-   * @param field 属性
+   * @param field  属性
    * @return 返回对象中指定属性的值。
    */
   public static Object getField(Object target, Field field) {
@@ -74,8 +70,8 @@ public class BeanUtils {
 
   /**
    * 获取对象中指定属性的值，支持多层级。
-   * 
-   * @param target 对象
+   *
+   * @param target    对象
    * @param fieldName 属性名
    * @return 返回对象中指定属性的值。
    */
@@ -89,10 +85,10 @@ public class BeanUtils {
 
   /**
    * 设置对象中指定属性的值。
-   * 
+   *
    * @param target 对象
-   * @param field 属性
-   * @param value 值
+   * @param field  属性
+   * @param value  值
    */
   public static void setField(Object target, Field field, Object value) {
     try {
@@ -107,10 +103,10 @@ public class BeanUtils {
 
   /**
    * 设置对象中指定属性的值，支持多层级。
-   * 
-   * @param target 对象
+   *
+   * @param target    对象
    * @param fieldName 属性名
-   * @param value 值
+   * @param value     值
    */
   public static void setField(Object target, String fieldName, Object value) {
     if (fieldName.contains(".")) {
@@ -122,8 +118,8 @@ public class BeanUtils {
 
   /**
    * 获取指定类所有的公共属性列表。
-   * 
-   * @param targetClass 类
+   *
+   * @param targetClass       类
    * @param excludeFieldNames 排除的属性名称
    * @return 返回Field列表。
    */
@@ -144,8 +140,8 @@ public class BeanUtils {
 
   /**
    * 获取指定类非static、final的公共属性列表。
-   * 
-   * @param targetClass 类
+   *
+   * @param targetClass       类
    * @param excludeFieldNames 排除的属性名称
    * @return 返回Field列表。
    */
@@ -161,7 +157,7 @@ public class BeanUtils {
 
   /**
    * 复制两个对象相同Field的值，忽略源对象中为null的Field。
-   * 
+   *
    * @param source 源对象
    * @param target 目标对象
    */
@@ -171,9 +167,9 @@ public class BeanUtils {
 
   /**
    * 复制两个对象相同Field的值，忽略源对象中为null的Field。
-   * 
-   * @param source 源对象
-   * @param target 目标对象
+   *
+   * @param source        源对象
+   * @param target        目标对象
    * @param excludeFields 不复制的Field的名称，多个名称之间用“,”分割
    */
   public static void copyFields(Object source, Object target, String excludeFields) {
@@ -182,22 +178,22 @@ public class BeanUtils {
 
   /**
    * 复制两个对象相同Field的值，忽略源对象中为null的Field，但如果指定了要复制的Field，则为null时该Field也复制。
-   * 
-   * @param source 源对象
-   * @param target 目标对象
+   *
+   * @param source        源对象
+   * @param target        目标对象
    * @param includeFields 要复制的Field的名称，多个名称之间用“,”分割
    * @param excludeFields 不复制的Field的名称，多个名称之间用“,”分割
    */
   public static void copyFields(Object source, Object target, String includeFields,
-      String excludeFields) {
+                                String excludeFields) {
     checkSourceAndTarget(source, target);
     // 如果源对象是懒加载对象，先处理成非懒加载
     source = processHibernateLazyObject(source);
-    String[] includeFieldNames = new String[] {};
+    String[] includeFieldNames = new String[]{};
     if (!StringUtils.isBlank(includeFields)) {
       includeFieldNames = includeFields.split(",");
     }
-    String[] excludeFieldNames = new String[] {};
+    String[] excludeFieldNames = new String[]{};
     if (!StringUtils.isBlank(excludeFields)) {
       excludeFieldNames = excludeFields.split(",");
     }
@@ -212,16 +208,39 @@ public class BeanUtils {
   }
 
   /**
+   * 复制两个对象相同Field的值，忽略源对象中为null的Field，但如果指定了要复制的Field，则为null时该Field也复制。
+   *
+   * @param source        源对象
+   * @param target        目标对象
+   * @param includeFields 要复制的Field的名称，多个名称之间用“,”分割
+   */
+  public static void copyPropertiess(Object source, Object target, String includeFields) {
+    checkSourceAndTarget(source, target);
+    // 如果源对象是懒加载对象，先处理成非懒加载
+    source = processHibernateLazyObject(source);
+    String[] includeFieldNames = new String[]{};
+    if (!StringUtils.isBlank(includeFields)) {
+      includeFieldNames = includeFields.split(",");
+    }
+    List<Field> fields = getAllDeclaredField(source.getClass());
+    for (Field field : fields) {
+      if (CollectionUtils.contains(includeFieldNames, field.getName())) {
+        copyField(source, target, field.getName(), true);
+      }
+    }
+  }
+
+  /**
    * 复制两个对象指定Field的值。
-   * 
-   * @param source 源对象
-   * @param target 目标对象
-   * @param fieldName Field的名称
+   *
+   * @param source        源对象
+   * @param target        目标对象
+   * @param fieldName     Field的名称
    * @param containedNull 是否复制null值
    */
   @SuppressWarnings("unchecked")
   public static void copyField(Object source, Object target, String fieldName,
-      Boolean containedNull) {
+                               Boolean containedNull) {
     // 如果源对象是懒加载对象，先处理成非懒加载
     source = processHibernateLazyObject(source);
     Object sourceFieldValue = getField(source, fieldName);
@@ -232,10 +251,10 @@ public class BeanUtils {
     if (needCopy) {
       // 处理Collection类型的属性
       if (sourceFieldValue != null
-          && Collection.class.isAssignableFrom(sourceFieldValue.getClass())) {
+              && Collection.class.isAssignableFrom(sourceFieldValue.getClass())) {
         if (!((Collection<Object>) sourceFieldValue).isEmpty() || containedNull) {
           CollectionUtils.copy((Collection<Object>) sourceFieldValue,
-              (Collection<Object>) getField(target, fieldName));
+                  (Collection<Object>) getField(target, fieldName));
         }
       } else {
         setField(target, fieldName, sourceFieldValue);
@@ -245,7 +264,7 @@ public class BeanUtils {
 
   /**
    * 获取Field的类型。
-   * 
+   *
    * @param field Field
    * @return 返回Field的类型。
    */
@@ -263,7 +282,7 @@ public class BeanUtils {
 
   /**
    * 获取泛型Field的泛型类型。
-   * 
+   *
    * @param field 泛型Field
    * @return 返回泛型Field的泛型类型。
    */
@@ -278,9 +297,9 @@ public class BeanUtils {
 
   /**
    * 复制Bean对象属性到Map对象。
-   * 
+   *
    * @param bean Bean对象
-   * @param map Map对象
+   * @param map  Map对象
    */
   public static void copyProperties(Object bean, Map<String, Object> map) {
     copyProperties(bean, map, null);
@@ -288,14 +307,14 @@ public class BeanUtils {
 
   /**
    * 复制Bean对象属性到Map对象。
-   * 
-   * @param bean Bean对象
-   * @param map Map对象
+   *
+   * @param bean          Bean对象
+   * @param map           Map对象
    * @param excludeFields 不复制的Field的名称，多个名称之间用“,”分割
    */
   public static void copyProperties(Object bean, Map<String, Object> map, String excludeFields) {
     checkSourceAndTarget(bean, map);
-    String[] excludeFieldNames = new String[] {};
+    String[] excludeFieldNames = new String[]{};
     if (!StringUtils.isBlank(excludeFields)) {
       excludeFieldNames = excludeFields.split(",");
     }
@@ -308,8 +327,8 @@ public class BeanUtils {
 
   /**
    * 复制Map对象属性到Bean对象。
-   * 
-   * @param map Map对象
+   *
+   * @param map  Map对象
    * @param bean Bean对象
    */
   public static void copyProperties(Map<String, Object> map, Object bean) {
@@ -318,15 +337,14 @@ public class BeanUtils {
 
   /**
    * 复制Map对象属性到Bean对象。
-   * 
-   * @param map Map对象
-   * @param bean Bean对象
+   *
+   * @param map           Map对象
+   * @param bean          Bean对象
    * @param excludeFields 不复制的Field的名称，多个名称之间用“,”分割
-   * 
    */
   public static void copyProperties(Map<String, Object> map, Object bean, String excludeFields) {
     checkSourceAndTarget(map, bean);
-    String[] excludeFieldNames = new String[] {};
+    String[] excludeFieldNames = new String[]{};
     if (!StringUtils.isBlank(excludeFields)) {
       excludeFieldNames = excludeFields.split(",");
     }
@@ -340,9 +358,9 @@ public class BeanUtils {
 
   /**
    * 判断指定的Field是否需要复制。
-   * 
-   * @param source 源对象
-   * @param target 目标对象
+   *
+   * @param source    源对象
+   * @param target    目标对象
    * @param fieldName Field的名称
    * @return 返回指定的Field是否需要复制。
    */
@@ -351,9 +369,9 @@ public class BeanUtils {
       Field sourceField = findField(source.getClass(), fieldName);
       Field targetField = findField(target.getClass(), fieldName);
       return targetField != null && sourceField != null
-          && sourceField.getType() == targetField.getType()
-          && !Modifier.isFinal(targetField.getModifiers())
-          && !Modifier.isStatic(targetField.getModifiers());
+              && sourceField.getType() == targetField.getType()
+              && !Modifier.isFinal(targetField.getModifiers())
+              && !Modifier.isStatic(targetField.getModifiers());
     } catch (SysException e) {
       return false;
     }
@@ -361,9 +379,9 @@ public class BeanUtils {
 
   /**
    * 获取类中指定名称的单层级属性。
-   * 
+   *
    * @param targetClass 类
-   * @param fieldName 属性名
+   * @param fieldName   属性名
    * @return 返回对应的属性，如果没找到返回null。
    */
   private static Field findDirectField(Class<?> targetClass, String fieldName) {
@@ -377,9 +395,9 @@ public class BeanUtils {
 
   /**
    * 获取类中指定名称的多层级属性。
-   * 
+   *
    * @param targetClass 类
-   * @param fieldName 属性名
+   * @param fieldName   属性名
    * @return 返回对应的属性，如果没找到返回null。
    */
   private static Field findNestedField(Class<?> targetClass, String fieldName) {
@@ -394,8 +412,8 @@ public class BeanUtils {
 
   /**
    * 获取对象中指定单层级属性的值。
-   * 
-   * @param target 对象
+   *
+   * @param target    对象
    * @param fieldName 属性名
    * @return 返回对象中指定属性的值。
    */
@@ -406,8 +424,8 @@ public class BeanUtils {
 
   /**
    * 获取对象中指定多层级属性的值。
-   * 
-   * @param target 对象
+   *
+   * @param target    对象
    * @param fieldName 属性名
    * @return 返回对象中指定属性的值。
    */
@@ -421,10 +439,10 @@ public class BeanUtils {
 
   /**
    * 设置对象中指定单层级属性的值。
-   * 
-   * @param target 对象
+   *
+   * @param target    对象
    * @param fieldName 属性名
-   * @param value 值
+   * @param value     值
    */
   private static void setDirectField(Object target, String fieldName, Object value) {
     Field field = findDirectField(target.getClass(), fieldName);
@@ -433,10 +451,10 @@ public class BeanUtils {
 
   /**
    * 设置对象中指定多层级属性的值。
-   * 
-   * @param target 对象
+   *
+   * @param target    对象
    * @param fieldName 属性名
-   * @param value 值
+   * @param value     值
    */
   private static void setNestedField(Object target, String fieldName, Object value) {
     String[] nestedFieldNames = StringUtils.substringBeforeLast(fieldName, ".").split("\\.");
@@ -452,7 +470,7 @@ public class BeanUtils {
 
   /**
    * 处理Hibernate懒加载对象。
-   * 
+   *
    * @param lazyObject 懒加载对象
    * @return 如果是Hibernate懒加载对象则执行代理方法返回实际对象，否则直接返回。
    */
@@ -474,7 +492,7 @@ public class BeanUtils {
 
   /**
    * 检查源对象和目标对象。
-   * 
+   *
    * @param source 源对象
    * @param target 目标对象
    */
@@ -487,5 +505,6 @@ public class BeanUtils {
   /**
    * 私有构造方法。
    */
-  private BeanUtils() {}
+  private BeanUtils() {
+  }
 }
