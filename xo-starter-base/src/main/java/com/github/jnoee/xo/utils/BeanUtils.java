@@ -214,7 +214,7 @@ public class BeanUtils {
    * @param target        目标对象
    * @param includeFields 要复制的Field的名称，多个名称之间用“,”分割
    */
-  public static void copyPropertiess(Object source, Object target, String includeFields) {
+  public static void copy(Object source, Object target, String includeFields) {
     checkSourceAndTarget(source, target);
     // 如果源对象是懒加载对象，先处理成非懒加载
     source = processHibernateLazyObject(source);
